@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
+    "agora-rtc-sdk-ng": "^4.x.x",
     "assert": "^2.1.0",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
@@ -23,9 +24,7 @@
     "socket.io-client": "^4.8.1",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
-    "web-vitals": "^2.1.4",
-    "agora-rtc-sdk-ng": "^4.x.x",
-    "gh-pages": "^6.1.1"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "set PORT=3001 && react-scripts start",
@@ -56,9 +55,10 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.9",
     "autoprefixer": "^10.4.20",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.5.3",
     "postcss-loader": "^8.1.1",
     "tailwindcss": "^4.0.9"
   },
-  "homepage": "https://joeart15.github.io/all-in-poker-frontend"
+  "homepage": "https://joeart15.github.io/pokergame"
 }
