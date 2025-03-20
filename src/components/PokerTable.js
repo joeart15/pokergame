@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import React from 'react';
+import VideoChat from './VideoChat';
+import { collegeTheme } from '../theme/collegeTheme';
+import '../styles/PokerTable.css';
 
 const REACT_APP_SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:3000";
 
@@ -10,11 +14,15 @@ const socket = io(REACT_APP_SERVER_URL, {
     transports: ['websocket', 'polling']
 });
 
-const Button = ({ children, onClick, disabled }) => (
+const Button = ({ children, onClick, disabled, variant = 'primary' }) => (
     <button 
-        className={`px-4 py-2 ${disabled 
-            ? 'bg-gray-500 cursor-not-allowed' 
-            : 'bg-blue-500 hover:bg-blue-700'} text-white font-bold rounded-md transition`}
+        className={`px-4 py-2 rounded-md transition font-bold ${
+            disabled 
+                ? 'bg-gray-500 cursor-not-allowed' 
+                : variant === 'primary'
+                    ? `bg-[${collegeTheme.buttons.primary.background}] hover:bg-[${collegeTheme.buttons.primary.hover}] text-[${collegeTheme.buttons.primary.text}]`
+                    : `bg-[${collegeTheme.buttons.secondary.background}] hover:bg-[${collegeTheme.buttons.secondary.hover}] text-[${collegeTheme.buttons.secondary.text}]`
+        }`}
         onClick={onClick}
         disabled={disabled}
     >
@@ -47,7 +55,7 @@ const Card = ({ card }) => {
     );
 };
 
-export default function PokerTable() {
+const PokerTable = ({ username, tableId, ...props }) => {
     const [gameState, setGameState] = useState({
         players: [],
         pot: 0,
@@ -56,7 +64,6 @@ export default function PokerTable() {
         communityCards: [],
         currentTurn: null
     });
-    const [tableId] = useState("table1");
     const [playerId, setPlayerId] = useState("");
     const [error, setError] = useState("");
     const [playerName, setPlayerName] = useState("");
@@ -135,12 +142,28 @@ export default function PokerTable() {
     };
 
     return (
-        <div className="p-6 bg-gray-900 min-h-screen text-white flex flex-col items-center">
-            <h1 className="text-4xl font-bold mb-6">All-In Poker</h1>
-            
-            {/* Error display */}
+        <div className="min-h-screen text-white flex flex-col items-center" 
+             style={{ 
+                 background: collegeTheme.colors.background,
+                 fontFamily: collegeTheme.fonts.primary 
+             }}>
+            {/* Header Section */}
+            <div className="w-full p-6 shadow-lg" style={{ background: collegeTheme.colors.primary }}>
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <h1 className="text-4xl font-bold" style={{ fontFamily: collegeTheme.fonts.heading }}>
+                        {collegeTheme.branding.welcomeMessage}
+                    </h1>
+                    <p style={{ color: collegeTheme.colors.secondary }} className="text-xl">
+                        {collegeTheme.branding.tagline}
+                    </p>
+                </div>
+            </div>
+
+            <VideoChat username={username} tableId={tableId} />
+
+            {/* Error display with college theme */}
             {error && (
-                <div className="bg-red-500 text-white px-4 py-2 rounded-md mb-4">
+                <div className="bg-red-500 text-white px-6 py-3 rounded-lg mb-6 shadow-lg">
                     {error}
                 </div>
             )}
@@ -148,13 +171,17 @@ export default function PokerTable() {
             {/* Debug info */}
             {renderDebugInfo()}
 
-            {/* Join table section */}
+            {/* Join table section with college theme */}
             {!playerId && (
-                <div className="mb-6">
+                <div className="mb-8 p-6 rounded-lg shadow-xl" style={{ background: collegeTheme.colors.accent }}>
+                    <h2 className="text-2xl mb-4" style={{ fontFamily: collegeTheme.fonts.heading }}>
+                        Join the Game
+                    </h2>
                     <input
                         type="text"
                         placeholder="Enter your name"
-                        className="px-4 py-2 rounded-md text-black mr-2"
+                        className="px-4 py-2 rounded-md text-black mr-4"
+                        style={{ borderColor: collegeTheme.colors.secondary, borderWidth: 2 }}
                         value={playerName}
                         onChange={(e) => setPlayerName(e.target.value)}
                     />
@@ -162,18 +189,25 @@ export default function PokerTable() {
                 </div>
             )}
 
-            {/* Game information */}
-            <div className="mb-6 text-center">
-                <p className="text-xl">Phase: {getPhaseText()}</p>
-                <p className="text-xl">Pot: ${gameState.pot}</p>
+            {/* Game information with college theme */}
+            <div className="mb-8 text-center p-6 rounded-lg shadow-xl" style={{ background: collegeTheme.colors.accent }}>
+                <p className="text-2xl mb-2">Phase: {getPhaseText()}</p>
+                <p className="text-3xl" style={{ color: collegeTheme.colors.secondary }}>Pot: ${gameState.pot}</p>
                 <p className="text-xl">Current Bet: ${gameState.currentBet}</p>
             </div>
 
-            {/* Community cards */}
+            {/* Community cards with college theme */}
             {gameState.communityCards?.length > 0 && (
-                <div className="mb-6">
-                    <h2 className="text-xl mb-2">Community Cards</h2>
-                    <div className="flex gap-2">
+                <div className="mb-8 p-6 rounded-lg shadow-xl" 
+                     style={{ 
+                         background: collegeTheme.table.felt,
+                         borderColor: collegeTheme.table.border,
+                         borderWidth: 2
+                     }}>
+                    <h2 className="text-2xl mb-4" style={{ fontFamily: collegeTheme.fonts.heading }}>
+                        Community Cards
+                    </h2>
+                    <div className="flex gap-4">
                         {gameState.communityCards.map((card, i) => (
                             <Card key={i} card={card} />
                         ))}
@@ -181,11 +215,13 @@ export default function PokerTable() {
                 </div>
             )}
 
-            {/* Player's hand */}
+            {/* Player's hand with college theme */}
             {currentPlayer?.hand?.length > 0 && (
-                <div className="mb-6">
-                    <h2 className="text-xl mb-2">Your Hand</h2>
-                    <div className="flex gap-2">
+                <div className="mb-8 p-6 bg-[${collegeTheme.table.felt}] rounded-lg shadow-xl border-2 border-[${collegeTheme.table.border}]">
+                    <h2 className="text-2xl mb-4" style={{ fontFamily: collegeTheme.fonts.heading }}>
+                        Your Hand
+                    </h2>
+                    <div className="flex gap-4">
                         {currentPlayer.hand.map((card, i) => (
                             <Card key={i} card={card} />
                         ))}
@@ -193,12 +229,13 @@ export default function PokerTable() {
                 </div>
             )}
 
-            {/* Action buttons */}
+            {/* Action buttons with college theme */}
             {playerId && (
-                <div className="flex gap-4 mb-6">
+                <div className="flex gap-6 mb-8">
                     <Button 
                         onClick={() => handleAction('fold')}
                         disabled={!isPlayerTurn || currentPlayer?.folded}
+                        variant="secondary"
                     >
                         Fold
                     </Button>
@@ -217,35 +254,54 @@ export default function PokerTable() {
                 </div>
             )}
 
-            {/* Players list */}
-            <div className="w-full max-w-2xl">
-                <h2 className="text-xl mb-4">Players</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Players list with college theme */}
+            <div className="w-full max-w-4xl mb-8">
+                <h2 className="text-2xl mb-6" style={{ fontFamily: collegeTheme.fonts.heading }}>
+                    Players at the Table
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {gameState.players.map((player) => (
                         <div 
                             key={player.id} 
-                            className={`p-4 rounded-md ${
+                            className={`p-6 rounded-lg shadow-xl ${
                                 player.id === socket.id 
-                                    ? 'bg-blue-800' 
+                                    ? `bg-[${collegeTheme.colors.primary}]` 
                                     : player.folded 
                                         ? 'bg-gray-700' 
-                                        : 'bg-gray-800'
+                                        : `bg-[${collegeTheme.colors.accent}]`
                             } ${
                                 gameState.currentTurn === gameState.players.findIndex(p => p.id === player.id)
-                                    ? 'ring-2 ring-yellow-500'
+                                    ? `ring-4 ring-[${collegeTheme.colors.secondary}]`
                                     : ''
                             }`}
                         >
-                            <div className="flex justify-between items-center">
-                                <span className="font-bold">{player.name}</span>
-                                <span>${player.chips}</span>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-xl font-bold">{player.name}</span>
+                                <span className="text-[${collegeTheme.colors.secondary}] text-lg">
+                                    ${player.chips}
+                                </span>
                             </div>
-                            {player.folded && <span className="text-red-500">(Folded)</span>}
-                            {player.currentBet > 0 && <span className="text-green-500">Bet: ${player.currentBet}</span>}
+                            {player.folded && (
+                                <span className="text-red-500 font-bold">(Folded)</span>
+                            )}
+                            {player.currentBet > 0 && (
+                                <span className="text-[${collegeTheme.colors.secondary}]">
+                                    Bet: ${player.currentBet}
+                                </span>
+                            )}
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* Footer with college theme */}
+            <footer className="w-full p-4 mt-auto" style={{ background: collegeTheme.colors.primary }}>
+                <div className="text-center text-sm">
+                    {collegeTheme.branding.footer}
+                </div>
+            </footer>
         </div>
     );
-}
+};
+
+export default PokerTable;

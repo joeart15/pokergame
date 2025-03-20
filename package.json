@@ -1,6 +1,7 @@
 {
   "name": "all-in-poker-frontend",
   "version": "0.1.0",
+  "homepage": "https://joeart15.github.io/pokergame",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -27,12 +28,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "set PORT=3001 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -59,6 +60,5 @@
     "postcss": "^8.5.3",
     "postcss-loader": "^8.1.1",
     "tailwindcss": "^4.0.9"
-  },
-  "homepage": "https://joeart15.github.io/pokergame"
+  }
 }
